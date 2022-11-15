@@ -1,99 +1,62 @@
-#### Lab 2 Part 2: Mapping Risk with R ####
+---
+title: "mapping_risk"
+author: "Sarah Forrest"
+date: "2022-11-15"
+output: github_document
+---
 
-# Three steps to minimize errors
+This code creates a combined map of New York City's death rates per 100,000 and excess risk of dying from dying from COVID-19 by modified zip code tabulation area (modZCTA).
 
-# Step 1: install the packages (need to install only once)
-install.packages("tidyverse")    # data management/visualization (several packages)
-install.packages("sf")           # GIS package
-install.packages("tmap")         # mapping package
-install.packages("tmaptools")    # additional tools for tmap 
-install.packages("cowplot")      # combine plots
-
-
-# Step 2: load packages 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, message = FALSE, dpi = 300, fig.width = 7)
 library(tidyverse)
 library(sf)
 library(tmap)
 library(tmaptools)
 library(cowplot)
+```
 
+# Read In Data
 
-# Step 3: Set your working directory 
-setwd("~/Documents/Graduate Courses/3_Fall 2022 Semester/Public Health GIS/Lab 2/Lab2")
+Read in NYC MODZCTA shapefile:
 
-
-# Read-in shapefile 
-zip_nyc <- st_read("MODZCTA_2010.shp")
+```{r}
+zip_nyc <- st_read("data/mapping_risk/MODZCTA_2010.shp")
 
 str(zip_nyc)
 
 tm_shape(zip_nyc) +
   tm_polygons()
+```
 
+Read-in data COVID-19 by NYC MODZCTA:
 
-# Read-in data
-covid <- read_csv("data-by-modzcta.csv")
+```{r}
+covid <- read_csv("data/mapping_risk/data-by-modzcta.csv")
 str(covid)
 summary(covid)
+```
 
+Join COVID-19 data with NYC MODZCTA shapefile object:
 
-# Join COVID data with sf object
+```{r}
 covid_zip <- merge(zip_nyc, covid, 
-                        by.x = "MODZCTA",
-                        by.y = "modified_ZCTA")
+                   by.x = "MODZCTA",
+                   by.y = "modified_ZCTA")
+```
 
+Generate COVID-19 death rate and relative risk:
 
-# Generate rate and RR
+```{r}
 covid_zip %>% 
   mutate(rate = 100000*(death_count/population),
          expected = population*(35253/8336817),
          RR = death_count/expected) -> covid_zip_rr
+```
 
+# COVID-19 Death Rate Map 
 
-# Death Rate map 
-
-# Step 1: set colors 
-tm_shape(covid_zip_rr) +
-  tm_polygons(col = "rate",
-              style = "quantile",
-              n = 5,
-              palette = "YlOrBr",
-              border.col = "black",
-              title = "Rate per 100k")
-
-
-# Step 2: adjust legend 
-tm_shape(covid_zip_rr) +
-  tm_polygons(col = "rate",
-              style = "quantile",
-              n = 5,
-              palette = "YlOrBr",
-              border.col = "black",
-              title = "Rate per 100k") +
-  tm_legend(legend.position = c(0.12, 0.47),
-            legend.text.fontfamily = "Avenir",
-            legend.text.size = 1)
-
-
-# Step 3: add title
-tm_shape(covid_zip_rr) +
-  tm_polygons(col = "rate",
-              style = "quantile",
-              n = 5,
-              palette = "YlOrBr",
-              border.col = "black",
-              title = "Rate per 100k") +
-  tm_legend(legend.position = c(0.12, 0.47),
-            legend.text.fontfamily = "Avenir",
-            legend.text.size = 1) +
-  tm_layout(title = "COVID19 Death Rate \nper 100,000",
-            title.size = 1.4,                                                  
-            title.position = c(0.12, .85),  
-            title.fontfamily = "Avenir",
-            frame = FALSE)
-
-
-# Step 4: North arrow and scale 
+```{r}
 tm_shape(covid_zip_rr) +
   tm_polygons(col = "rate",
               style = "quantile",
@@ -112,9 +75,11 @@ tm_shape(covid_zip_rr) +
   tm_compass(type = "arrow",
              position = c(0.23, 0.05)) +
   tm_scale_bar(position = c(0.32, 0.04))
+```
 
+Save map as an object: 
 
-# Step 5: Save in object
+```{r}
 tm_shape(covid_zip_rr) +
   tm_polygons(col = "rate",
               style = "quantile",
@@ -133,47 +98,11 @@ tm_shape(covid_zip_rr) +
   tm_compass(type = "arrow",
              position = c(0.23, 0.05)) +
   tm_scale_bar(position = c(0.32, 0.04)) -> death_rates
+```
 
+# COVID-19 Excess Risk Map 
 
-
-# Excess Risk map 
-
-# Step 1: get colors
-tm_shape(covid_zip_rr) +
-  tm_polygons(col = "RR",
-              style = "quantile",
-              n = 5,
-              palette = "RdBu",
-              border.col = "black",
-              title = "Excess Risk")
-
-
-# Step 2: invert ramp 
-tm_shape(covid_zip_rr) +
-  tm_polygons(col = "RR",
-              style = "quantile",
-              n = 5,
-              palette = "-RdBu",  # invert color ramp  
-              border.col = "black",
-              title = "Excess Risk")
-
-
-# Step 3: add custom breaks
-tm_shape(covid_zip_rr) +
-  tm_polygons(col = "RR",
-              n = 5,
-              breaks = c(0, 
-                         0.50, 
-                         0.90, 
-                         1.10, 
-                         1.50, 
-                         2.91),
-              palette = "-RdBu",  
-              border.col = "black",
-              title = "Excess Risk")
-
-
-# Step 4: add remaining elements
+```{r}
 tm_shape(covid_zip_rr) +
   tm_polygons(col = "RR",
               n = 5,
@@ -197,9 +126,11 @@ tm_shape(covid_zip_rr) +
   tm_credits("Author: Sarah Forrest \nSource: NYC Health \nDate: September 14, 2022",
                         size = .7,
                         position = c(.66,.04))
+```
 
+Save map as an object: 
 
-# Step 5: assign to an object
+```{r}
 tm_shape(covid_zip_rr) +
   tm_polygons(col = "RR",
               n = 5,
@@ -223,18 +154,26 @@ tm_shape(covid_zip_rr) +
   tm_credits("Author: Sarah Forrest \nSource: NYC Health \nDate: September 14, 2022",
              size = .7,
              position = c(.66,.04)) -> excess_risk
+```
 
+# Combined COVID-19 Death Rate and Excess Risk Map
 
-# Turn tmap objects into cowplot objects
+Turn tmap objects into cowplot objects:
+
+```{r}
 tmap_grob(death_rates) -> rates_cow
 tmap_grob(excess_risk) -> excess_cow
+```
 
+Create a combined figure with cowplot:
 
-# Basic combined figure with cowplot
-
+```{r}
 plot_row <- plot_grid(rates_cow, excess_cow)
+```
 
-# Write title
+Add title and save the combined map as an object:
+
+```{r}
 title <- ggdraw() + 
   draw_label(
     "New York City COVID-19 Deaths By Zip Code, 2020 - 2021",
@@ -244,26 +183,22 @@ title <- ggdraw() +
     size = 28) +
   theme( plot.margin = margin(0, 0, 0, 25))
 
-
-# Finish it off
-plot_grid(title,
-          plot_row,
-          ncol = 1,
-          rel_heights = c(.2,1)) 
-
-
 plot_grid(title,
           plot_row,
           ncol = 1,
           rel_heights = c(.2,1)) -> combined_cow
 
+combined_cow
+```
 
-# Save map 
-ggsave(combined_cow,
-         width = 18, 
-         height = 10,
-         file = "risk.jpeg")
+Save map using `ggsave()`:
 
+```{r}
+# ggsave(combined_cow,
+#         width = 18, 
+#         height = 10,
+#         file = "covid_deathrate_excessrisk.jpeg")
+```
 
 
 
