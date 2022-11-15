@@ -110,8 +110,8 @@ tm_shape(covid_zip_rr) +
             legend.text.fontfamily = "Avenir",
             legend.text.size = 1) +
   tm_layout(title = "COVID19 Death Rate \nper 100,000",
-            title.size = 1.4,                                                  
-            title.position = c(0.12, .85),  
+            title.size = 1.3,                                                  
+            title.position = c(0.10, .85),  
             title.fontfamily = "Avenir",
             frame = FALSE) +
   tm_compass(type = "arrow",
@@ -135,8 +135,8 @@ tm_shape(covid_zip_rr) +
             legend.text.fontfamily = "Avenir",
             legend.text.size = 1) +
   tm_layout(title = "COVID19 Death Rate \nper 100,000",
-            title.size = 1.4,                                                  
-            title.position = c(0.12, .85),  
+            title.size = 1.3,                                                  
+            title.position = c(0.10, .85),  
             title.fontfamily = "Avenir",
             frame = FALSE) +
   tm_compass(type = "arrow",
@@ -163,8 +163,8 @@ tm_shape(covid_zip_rr) +
             legend.text.fontfamily = "Avenir",
             legend.text.size = 1) +
   tm_layout(title = "Excess Risk of Dying \nfrom COVID19",
-            title.size = 1.4,                                                  
-            title.position = c(0.12, .85),  
+            title.size = 1.3,                                                  
+            title.position = c(0.10, .85),  
             title.fontfamily = "Avenir",
             frame = FALSE) +
   tm_credits("Author: Sarah Forrest \nSource: NYC Health \nDate: September 14, 2022",
@@ -193,8 +193,8 @@ tm_shape(covid_zip_rr) +
             legend.text.fontfamily = "Avenir",
             legend.text.size = 1) +
   tm_layout(title = "Excess Risk of Dying \nfrom COVID19",
-            title.size = 1.4,                                                  
-            title.position = c(0.12, .85),  
+            title.size = 1.3,                                                  
+            title.position = c(0.10, .85),  
             title.fontfamily = "Avenir",
             frame = FALSE) +
   tm_credits("Author: Sarah Forrest \nSource: NYC Health \nDate: September 14, 2022",
@@ -233,7 +233,7 @@ title <- ggdraw() +
     fontfamily = "Avenir",
     x = 0,
     hjust = 0,
-    size = 28) +
+    size = 20) +
   theme( plot.margin = margin(0, 0, 0, 25))
 
 plot_grid(title,
