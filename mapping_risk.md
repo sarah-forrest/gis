@@ -5,7 +5,7 @@ Sarah Forrest
 
 This code creates a combined map of New York City’s death rates per
 100,000 and excess risk of dying from dying from COVID-19 by modified
-zip code tabulation area (modZCTA).
+zip code tabulation area (modZCTA)
 
 # Read In Data
 

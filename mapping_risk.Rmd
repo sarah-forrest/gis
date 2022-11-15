@@ -1,11 +1,11 @@
 ---
 title: "mapping_risk"
 author: "Sarah Forrest"
-date: "2022-11-15"
+date: '`r format(Sys.time(), "%Y-%m-%d")`'
 output: github_document
 ---
 
-This code creates a combined map of New York City's death rates per 100,000 and excess risk of dying from dying from COVID-19 by modified zip code tabulation area (modZCTA).
+This code creates a combined map of New York City's death rates per 100,000 and excess risk of dying from dying from COVID-19 by modified zip code tabulation area (modZCTA)
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(collapse = TRUE, message = FALSE, dpi = 300, fig.width = 7)
